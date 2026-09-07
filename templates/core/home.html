@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Secure Commerce | Considered goods, securely delivered{% endblock %}
+{% block meta_description %}Discover considered goods, secure accounts, and a calmer way to shop with Secure Commerce.{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block content %}
+<section class="store-hero" aria-labelledby="hero-title">
+  <div class="store-hero-copy">
+    <p class="eyebrow">The modern essentials edit</p>
+    <h1 id="hero-title">Objects worth choosing with care.</h1>
+    <p class="lede">A quieter way to discover well-made products, with a secure account experience behind every order.</p>
+    <div class="form-actions"><a class="sc-button" href="{% url 'products:catalog' %}">Explore the collection</a><a class="sc-button-quiet" href="#new-arrivals">See what’s new</a></div>
+  </div>
+  <div class="hero-composition" aria-hidden="true"><span class="hero-disc hero-disc-one"></span><span class="hero-disc hero-disc-two"></span><span class="hero-object">SC</span></div>
+</section>
+
+<section class="store-section" aria-labelledby="featured-title">
+  <div class="section-heading"><div><p class="eyebrow">Curated selection</p><h2 id="featured-title">Featured products</h2></div><a class="text-link" href="{% url 'products:catalog' %}">View all products</a></div>
+  <div class="product-grid">
+    {% for product in featured_products %}{% include "products/_product_card.html" with product=product %}{% empty %}
+      <div class="empty-state"><h3>The collection is taking shape.</h3><p>Add active, featured products in the admin to populate this showcase.</p></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="store-section" aria-labelledby="category-title">
+  <div class="section-heading"><div><p class="eyebrow">Browse with intent</p><h2 id="category-title">Explore categories</h2></div></div>
+  <div class="category-grid">
+    {% for category in categories %}
+      <a class="category-card" href="{% url 'products:category' category.slug %}"><span class="category-index">0{{ forloop.counter }}</span><strong>{{ category.name }}</strong><span>{{ category.product_count }} product{{ category.product_count|pluralize }}</span></a>
+    {% empty %}<div class="empty-state"><h3>No categories yet</h3><p>Catalog categories will appear here as soon as they are published.</p></div>{% endfor %}
+  </div>
+</section>
+
+<section class="editorial-banner" aria-labelledby="promise-title"><div><p class="eyebrow">Designed around confidence</p><h2 id="promise-title">Discovery should feel as good as delivery.</h2></div><p>Clear product information, thoughtful account security, and an intentionally focused catalog—without the noise.</p></section>
+
+<section class="store-section" aria-labelledby="trending-title">
+  <div class="section-heading"><div><p class="eyebrow">Fresh perspective</p><h2 id="trending-title">Trending now</h2></div><a class="text-link" href="{% url 'products:catalog' %}?sort=newest">Explore the catalog</a></div>
+  <div class="product-grid">{% for product in trending_products %}{% include "products/_product_card.html" with product=product %}{% empty %}<div class="empty-state"><h3>Trending products will appear here.</h3><p>This view highlights the latest catalog updates while sales data matures.</p></div>{% endfor %}</div>
+</section>
+
+<section id="new-arrivals" class="store-section" aria-labelledby="new-title">
+  <div class="section-heading"><div><p class="eyebrow">Recently added</p><h2 id="new-title">New arrivals</h2></div><a class="text-link" href="{% url 'products:catalog' %}?sort=newest">Shop new arrivals</a></div>
+  <div class="product-grid">{% for product in new_arrivals %}{% include "products/_product_card.html" with product=product %}{% empty %}<div class="empty-state"><h3>New arrivals will appear here.</h3><p>Publish an active product to start building the catalog.</p></div>{% endfor %}</div>
+</section>
+
+<section class="store-section" aria-labelledby="best-title">
+  <div class="section-heading"><div><p class="eyebrow">Customer favourites</p><h2 id="best-title">Best sellers</h2></div></div>
+  <div class="product-grid">{% for product in best_sellers %}{% include "products/_product_card.html" with product=product %}{% empty %}<div class="empty-state"><h3>Favourites will emerge here.</h3><p>This view updates from completed order data as the store grows.</p></div>{% endfor %}</div>
+</section>
+
+<section class="testimonial-band" aria-labelledby="testimonial-title"><div><p class="eyebrow">A better retail rhythm</p><h2 id="testimonial-title">“Less searching, more certainty.”</h2></div><p>Thoughtful browsing starts with a clear catalog and product details that respect your time.</p></section>
+
+<section class="store-section" aria-labelledby="journal-title">
+  <div class="section-heading"><div><p class="eyebrow">Journal</p><h2 id="journal-title">From the editorial desk</h2></div></div>
+  <div class="journal-grid">{% for post in posts %}<article class="journal-card"><p class="product-category">{{ post.published_at|date:"M j, Y" }}</p><h3>{{ post.title }}</h3><p>{{ post.excerpt|default:post.body|truncatechars:180 }}</p></article>{% empty %}<div class="empty-state"><h3>Stories are coming soon.</h3><p>Published editorial notes will appear here.</p></div>{% endfor %}</div>
+</section>
+
+<section class="newsletter-band" aria-labelledby="newsletter-title"><div><p class="eyebrow">Stay considered</p><h2 id="newsletter-title">Product updates without the noise.</h2><p>Account email preferences will be available alongside your profile settings.</p></div><a class="sc-button" href="{% url 'accounts:register' %}">Create an account</a></section>
+{% endblock %}

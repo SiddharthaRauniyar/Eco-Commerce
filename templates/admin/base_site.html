@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | Secure Commerce Admin{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}"><span class="admin-brand-mark" aria-hidden="true">SC</span> Secure Commerce</a>
+    <span class="admin-brand-subtitle">Operations</span>
+  </div>
+{% endblock %}
+
+{% block nav-global %}
+  <a class="admin-storefront-link" href="{% url 'admin_dashboard:workspace' %}">Staff workspace</a>
+  <a class="admin-storefront-link" href="{% url 'admin_dashboard:overview' %}">Operations dashboard</a>
+  {% if perms.security.view_securityevent %}<a class="admin-storefront-link" href="{% url 'security:monitoring' %}">Security monitor</a>{% endif %}
+  {% if perms.vulnerability_testing.view_vulnerabilityreport %}<a class="admin-storefront-link" href="{% url 'vulnerability_testing:dashboard' %}">Security checks</a>{% endif %}
+  <a class="admin-storefront-link" href="{% url 'analytics:reports' %}">Reports</a>
+  <a class="admin-storefront-link" href="{% url 'core:home' %}">View storefront</a>
+{% endblock %}

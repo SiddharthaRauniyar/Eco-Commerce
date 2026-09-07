@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Staff workspace | Secure Commerce{% endblock %}
+
+{% block content %}
+<section class="staff-hero">
+  <div>
+    <p class="eyebrow">Staff workspace</p>
+    <h1>Run the store from one calm workspace.</h1>
+    <p class="lede">Open the tools you are authorised to manage, with live operational context before you make a change.</p>
+  </div>
+  <div class="form-actions">
+    <a class="sc-button" href="{% url 'admin:index' %}">Open admin console</a>
+    <a class="sc-button-quiet" href="{% url 'analytics:reports' %}">View reports</a>
+  </div>
+</section>
+
+{% if metrics %}
+  <section class="staff-metrics" aria-label="Operations summary">
+    {% for metric in metrics %}<article><p>{{ metric.label }}</p><strong>{{ metric.value }}</strong><span>{{ metric.detail }}</span></article>{% endfor %}
+  </section>
+{% endif %}
+
+<section class="staff-shortcuts" aria-label="Common staff tasks">
+  {% if perms.products.add_product %}<a class="staff-shortcut" href="{% url 'admin:products_product_add' %}"><strong>Add product</strong><span>Create a catalogue item and set stock.</span></a>{% endif %}
+  {% if perms.products.view_product %}<a class="staff-shortcut" href="{% url 'admin:products_product_changelist' %}"><strong>Manage inventory</strong><span>Update products, variants, and stock.</span></a>{% endif %}
+  {% if perms.orders.view_order %}<a class="staff-shortcut" href="{% url 'admin:orders_order_changelist' %}"><strong>Manage orders</strong><span>Review fulfillment and customer requests.</span></a>{% endif %}
+  {% if perms.accounts.view_customuser %}<a class="staff-shortcut" href="{% url 'admin:accounts_customuser_changelist' %}"><strong>Manage customers</strong><span>Review account and verification status.</span></a>{% endif %}
+  {% if perms.security.view_securityevent %}<a class="staff-shortcut" href="{% url 'security:monitoring' %}"><strong>Security monitor</strong><span>Review alerts, sign-in failures, and audit records.</span></a>{% endif %}
+  {% if perms.vulnerability_testing.view_vulnerabilityreport %}<a class="staff-shortcut" href="{% url 'vulnerability_testing:dashboard' %}"><strong>Security checks</strong><span>Record the defensive-control baseline.</span></a>{% endif %}
+</section>
+
+{% if admin_apps %}
+  <section class="staff-management" aria-labelledby="management-title">
+    <div class="section-heading"><div><p class="eyebrow">Management</p><h2 id="management-title">Every permitted tool</h2></div><p class="fine-print">Tools are shown from your staff permissions.</p></div>
+    <div class="staff-app-grid">
+      {% for app in admin_apps %}
+        <section class="staff-app-card">
+          <h3><a href="{{ app.app_url }}">{{ app.name }}</a></h3>
+          <ul>{% for model in app.models %}<li>{% if model.admin_url %}<a href="{{ model.admin_url }}">{{ model.name }}</a>{% else %}<span>{{ model.name }}</span>{% endif %}{% if model.add_url %}<a class="staff-add" href="{{ model.add_url }}">Add</a>{% endif %}</li>{% endfor %}</ul>
+        </section>
+      {% endfor %}
+    </div>
+  </section>
+{% else %}
+  <section class="sc-card"><h2>No management permissions yet</h2><p class="lede">Ask an administrator to assign the staff role you need.</p></section>
+{% endif %}
+{% endblock %}

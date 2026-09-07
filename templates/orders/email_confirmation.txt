@@ -1,0 +1,19 @@
+Hello {{ order.shipping_address_snapshot.recipient_name|default:"there" }},
+
+Thank you for your order {{ order.order_number }}.
+{% if order.payment_status == "paid" %}Your payment is confirmed.
+{% else %}Your cash-on-delivery order is confirmed.
+{% endif %}
+Items:
+{% for item in order.items.all %}- {{ item.product_name }} ({{ item.sku }}) — {{ item.quantity }} × {{ order.currency }} {{ item.unit_price }} = {{ order.currency }} {{ item.line_total }}
+{% endfor %}
+Order total: {{ order.currency }} {{ order.grand_total }}
+
+Delivery address:
+{{ order.shipping_address_snapshot.recipient_name }}
+{{ order.shipping_address_snapshot.line1 }}
+{% if order.shipping_address_snapshot.line2 %}{{ order.shipping_address_snapshot.line2 }}
+{% endif %}{{ order.shipping_address_snapshot.city }}{% if order.shipping_address_snapshot.region %}, {{ order.shipping_address_snapshot.region }}{% endif %} {{ order.shipping_address_snapshot.postal_code }}
+{{ order.shipping_address_snapshot.country_code }}
+
+We will use this address to arrange fulfillment.

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Shop | Secure Commerce{% endblock %}
+{% block meta_description %}Browse Secure Commerce’s active collection by category, price, or product name.{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block content %}
+<section class="catalog-hero"><p class="eyebrow">The collection</p><h1>Find the right thing, without the endless scroll.</h1><p class="lede">Search the active catalog or refine it by category and what matters to you.</p></section>
+<section class="catalog-shell" aria-labelledby="catalog-title">
+  <h2 id="catalog-title" class="sr-only">Product catalog</h2>
+  <form class="catalog-controls" method="get">
+    <label><span>Search</span><input type="search" name="q" value="{{ query }}" placeholder="Search products"></label>
+    <label><span>Category</span><select name="category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category.slug }}"{% if selected_category == category.slug %} selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></label>
+    <label><span>Sort</span><select name="sort"><option value="newest"{% if selected_sort == "newest" %} selected{% endif %}>Newest</option><option value="price_low"{% if selected_sort == "price_low" %} selected{% endif %}>Price: low to high</option><option value="price_high"{% if selected_sort == "price_high" %} selected{% endif %}>Price: high to low</option><option value="name"{% if selected_sort == "name" %} selected{% endif %}>Name</option></select></label>
+    <button class="sc-button" type="submit">Apply</button>
+  </form>
+  {% if products %}<p class="catalog-count">{{ page_obj.paginator.count }} product{{ page_obj.paginator.count|pluralize }} found</p>{% endif %}
+  <div class="product-grid">{% for product in products %}{% include "products/_product_card.html" with product=product %}{% empty %}<div class="empty-state"><h3>No products match that search.</h3><p>Try a different term or clear the category filter.</p><a class="sc-button-quiet" href="{% url 'products:catalog' %}">Clear filters</a></div>{% endfor %}</div>
+  {% if is_paginated %}<nav class="pagination" aria-label="Catalog pages">{% if page_obj.has_previous %}<a class="sc-button-quiet" href="?q={{ query|urlencode }}&category={{ selected_category|urlencode }}&sort={{ selected_sort|urlencode }}&page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a class="sc-button-quiet" href="?q={{ query|urlencode }}&category={{ selected_category|urlencode }}&sort={{ selected_sort|urlencode }}&page={{ page_obj.next_page_number }}">Next</a>{% endif %}</nav>{% endif %}
+</section>
+{% endblock %}

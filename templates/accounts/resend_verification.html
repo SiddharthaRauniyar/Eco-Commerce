@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Resend verification | Secure Commerce{% endblock %}
+{% block content %}
+<section class="auth-layout"><div class="auth-intro"><p class="eyebrow">Account verification</p><h1>Let’s finish securing your account.</h1><p class="lede">We’ll send a new verification link if an eligible account matches the address.</p></div><section class="sc-card auth-card" aria-labelledby="resend-title"><h2 id="resend-title">Resend verification</h2><form class="sc-form" method="post">{% csrf_token %}{{ form.as_p }}<div class="form-actions"><button class="sc-button" type="submit">Send verification link</button></div></form></section></section>
+{% endblock %}

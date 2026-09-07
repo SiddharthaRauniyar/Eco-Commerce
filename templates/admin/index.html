@@ -1,0 +1,36 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <section class="admin-hero">
+    <div>
+      <p class="admin-eyebrow">Operations overview</p>
+      <h1>Run the store with clarity.</h1>
+      <p>Manage catalog, stock, customers, and orders from one protected workspace.</p>
+    </div>
+    <div class="admin-quick-actions" aria-label="Quick actions">
+      {% if perms.products.add_product %}<a class="button" href="{% url 'admin:products_product_add' %}">Add product</a>{% endif %}
+      {% if perms.products.add_inventoryadjustment %}<a class="button button-secondary" href="{% url 'admin:products_inventoryadjustment_add' %}">Adjust stock</a>{% endif %}
+      {% if perms.orders.view_order %}<a class="button button-secondary" href="{% url 'admin:orders_order_changelist' %}">Review orders</a>{% endif %}
+    </div>
+  </section>
+
+  {% if app_list %}
+    <div class="admin-app-grid">
+      {% for app in app_list %}
+        <section class="admin-app-card">
+          <header><a href="{{ app.app_url }}">{{ app.name }}</a></header>
+          <ul>
+            {% for model in app.models %}
+              <li>
+                {% if model.admin_url %}<a href="{{ model.admin_url }}">{{ model.name }}</a>{% else %}<span>{{ model.name }}</span>{% endif %}
+                {% if model.add_url %}<a class="admin-add-link" href="{{ model.add_url }}" aria-label="Add {{ model.name }}">Add</a>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>You do not have permission to view or edit anything.</p>
+  {% endif %}
+{% endblock %}

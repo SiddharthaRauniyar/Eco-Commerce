@@ -1,0 +1,12 @@
+.env
+backups/
+db.sqlite3
+media/
+staticfiles/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.venv/
+*.egg-info/
+node_modules/

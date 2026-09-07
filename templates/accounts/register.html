@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Create account | Secure Commerce{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-intro">
+    <p class="eyebrow">A calmer checkout starts here</p>
+    <h1>Commerce that feels considered.</h1>
+    <p class="lede">Create your account to keep orders, addresses, and account security in one protected place.</p>
+  </div>
+  <section class="sc-card auth-card" aria-labelledby="register-title">
+    <div><p class="eyebrow">Get started</p><h2 id="register-title">Create your account</h2></div>
+    <form class="sc-form" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="form-actions"><button class="sc-button" type="submit">Create account</button></div>
+    </form>
+    <p class="fine-print">Already registered? <a href="{% url 'accounts:login' %}">Sign in</a>.</p>
+  </section>
+</section>
+{% endblock %}

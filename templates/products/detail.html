@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} | Secure Commerce{% endblock %}
+{% block meta_description %}{{ product.short_description|default:product.description|truncatechars:155 }}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block content %}
+<p class="breadcrumb"><a href="{% url 'products:catalog' %}">Shop</a><span aria-hidden="true">/</span><a href="{% url 'products:category' product.category.slug %}">{{ product.category.name }}</a><span aria-hidden="true">/</span><span>{{ product.name }}</span></p>
+<section class="product-detail" aria-labelledby="product-title">
+  <div class="product-detail-media">
+    {% with primary_image=product.images.all|first %}{% if primary_image and primary_image.image %}<img src="{{ primary_image.image.url }}" alt="{{ primary_image.alt_text|default:product.name }}" decoding="async">{% else %}<span class="product-monogram" aria-hidden="true">{{ product.name|slice:":1" }}</span>{% endif %}{% endwith %}
+  </div>
+  <div class="product-detail-copy"><p class="eyebrow">{{ product.category.name }}</p><h1 id="product-title">{{ product.name }}</h1><p class="product-price">{{ product.currency }} {{ product.base_price }}</p><p class="lede">{{ product.description }}</p>
+    {% if product.variants.all %}<section class="detail-block"><h2>Available variations</h2><ul class="variant-list">{% for variant in product.variants.all %}<li><strong>{{ variant.name }}</strong>{% if variant.price_override %}<span>{{ product.currency }} {{ variant.price_override }}</span>{% endif %}</li>{% endfor %}</ul></section>{% endif %}
+    {% if product.attributes.all %}<section class="detail-block"><h2>Details</h2><dl class="spec-list">{% for attribute in product.attributes.all %}<div><dt>{{ attribute.name }}</dt><dd>{{ attribute.value }}</dd></div>{% endfor %}</dl></section>{% endif %}
+    <form class="sc-form product-purchase" method="post" action="{% url 'cart:add' product.pk %}">
+      {% csrf_token %}
+      {% if cart_form.variant %}<p><label for="{{ cart_form.variant.id_for_label }}">Variation</label>{{ cart_form.variant }}</p>{% endif %}
+      <p><label for="{{ cart_form.quantity.id_for_label }}">Quantity</label>{{ cart_form.quantity }}</p>
+      <div class="form-actions"><button class="sc-button" type="submit">Add to cart</button>{% if user.is_authenticated %}<button class="sc-button-quiet" type="submit" formaction="{% url 'wishlist:add' product.pk %}">Save to wishlist</button>{% else %}<a class="sc-button-quiet" href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}">Sign in to save</a>{% endif %}</div>
+    </form>
+  </div>
+</section>
+{% if related_products %}<section class="store-section" aria-labelledby="related-title"><div class="section-heading"><div><p class="eyebrow">More to explore</p><h2 id="related-title">From {{ product.category.name }}</h2></div></div><div class="product-grid">{% for product in related_products %}{% include "products/_product_card.html" with product=product %}{% endfor %}</div></section>{% endif %}
+{% endblock %}

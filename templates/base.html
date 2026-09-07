@@ -1,0 +1,60 @@
+{% load static %}
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{% block meta_description %}Secure Commerce offers considered goods with a secure, straightforward shopping experience.{% endblock %}">
+  <meta name="robots" content="{% block robots %}noindex, nofollow{% endblock %}">
+  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+  <title>{% block title %}Secure Commerce{% endblock %}</title>
+  <script nonce="{{ request.csp_nonce }}">
+    try {
+      document.documentElement.dataset.theme = localStorage.getItem("secure-commerce-theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    } catch { /* Use the light token set if storage is unavailable. */ }
+  </script>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script defer src="{% static 'js/theme.js' %}"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <nav class="site-shell site-nav" aria-label="Primary navigation">
+      <a class="brand" href="{% url 'core:home' %}">
+        <span class="brand-mark" aria-hidden="true">SC</span><span class="brand-label">Secure Commerce</span>
+      </a>
+      <div class="nav-actions">
+        <a class="sc-button-quiet sc-button-small" href="{% url 'products:catalog' %}">Shop</a>
+        <a class="sc-button-quiet sc-button-small" href="{% url 'cart:detail' %}">Cart</a>
+        <button class="theme-toggle sc-button-small" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch theme">
+          <span data-theme-label>Switch theme</span>
+        </button>
+      {% if user.is_authenticated %}
+        <a class="sc-button-quiet sc-button-small" href="{% url 'wishlist:detail' %}">Wishlist</a>
+        <a class="sc-button-quiet sc-button-small" href="{% url 'orders:history' %}">Orders</a>
+        <a class="sc-button-quiet sc-button-small" href="{% url 'accounts:mfa_setup' %}">Security</a>
+        {% if perms.security.view_securityevent %}<a class="sc-button-quiet sc-button-small" href="{% url 'security:monitoring' %}">Security monitor</a>{% endif %}
+        {% if perms.vulnerability_testing.view_vulnerabilityreport %}<a class="sc-button-quiet sc-button-small" href="{% url 'vulnerability_testing:dashboard' %}">Security checks</a>{% endif %}
+        {% if user.is_staff %}<a class="sc-button-quiet sc-button-small" href="{% url 'admin_dashboard:workspace' %}">Staff workspace</a>{% endif %}
+        <form method="post" action="{% url 'accounts:logout' %}">
+          {% csrf_token %}
+          <button class="sc-button-quiet sc-button-small" type="submit">Sign out</button>
+        </form>
+      {% else %}
+        <a class="sc-button-quiet sc-button-small" href="{% url 'accounts:login' %}">Sign in</a>
+        <a class="sc-button sc-button-small" href="{% url 'accounts:register' %}">Create account</a>
+      {% endif %}
+      </div>
+    </nav>
+  </header>
+  <main id="main-content" class="site-shell page-main">
+    {% if messages %}
+      <section class="status-stack" aria-label="Status messages" aria-live="polite">
+        {% for message in messages %}<p class="status-message">{{ message }}</p>{% endfor %}
+      </section>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

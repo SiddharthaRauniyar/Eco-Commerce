@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Your account | Secure Commerce{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-intro"><p class="eyebrow">Your account</p><h1>Everything, quietly under control.</h1><p class="lede">Manage the security foundation for your orders, personal information, and future saved preferences.</p></div>
+  <section class="sc-card auth-card" aria-labelledby="profile-title">
+    <div><p class="eyebrow">Account overview</p><h2 id="profile-title">{{ user.get_full_name|default:user.email }}</h2></div>
+    <div class="profile-fact"><strong>Email</strong><span>{{ user.email }}</span></div>
+    <div class="profile-fact">
+      <strong>Multi-factor authentication</strong>
+      {% if user.profile.mfa_enabled %}
+        <span>Enabled · <a href="{% url 'accounts:mfa_disable' %}">Disable MFA</a></span>
+      {% else %}
+        <span>Not enabled · <a href="{% url 'accounts:mfa_setup' %}">Set up MFA</a></span>
+      {% endif %}
+    </div>
+  </section>
+</section>
+{% endblock %}

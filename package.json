@@ -1,0 +1,12 @@
+{
+  "name": "secure-commerce-ui",
+  "private": true,
+  "scripts": {
+    "css:build": "tailwindcss -i static/src/tailwind.css -o static/css/tailwind.css --minify",
+    "css:watch": "tailwindcss -i static/src/tailwind.css -o static/css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

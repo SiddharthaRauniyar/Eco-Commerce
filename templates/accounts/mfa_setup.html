@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Set up MFA | Secure Commerce{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-intro"><p class="eyebrow">Account security</p><h1>Add a second line of defence.</h1><p class="lede">An authenticator app makes your account far harder to compromise, even if a password is exposed.</p></div>
+  <section class="sc-card auth-card" aria-labelledby="setup-title">
+    <div><p class="eyebrow">Step 1 of 1</p><h2 id="setup-title">Set up MFA</h2></div>
+    <p>Add this secret to your authenticator app, then enter its six-digit code.</p>
+    <code class="sc-code">{{ manual_secret }}</code>
+    <form class="sc-form" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="form-actions"><button class="sc-button" type="submit">Enable MFA</button></div>
+    </form>
+  </section>
+</section>
+{% endblock %}

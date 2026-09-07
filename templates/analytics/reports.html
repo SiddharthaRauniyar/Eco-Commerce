@@ -1,0 +1,78 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="{% static 'js/analytics.js' %}" defer></script>
+{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> › Reports</div>{% endblock %}
+
+{% block content %}
+<section class="admin-hero reports-hero">
+  <div>
+    <p class="admin-eyebrow">Permission-aware analytics</p>
+    <h1>See the signal. Move faster.</h1>
+    <p>Paid-order trends and operational exceptions for the areas you are authorised to manage.</p>
+    <p class="reports-window">{{ report.start|date:"M j, Y" }} – {{ report.end|date:"M j, Y" }}</p>
+  </div>
+  <form class="reports-controls" method="get">
+    <label for="report-range">Period</label>
+    <select id="report-range" name="range" data-report-range>
+      {% for value in ranges %}<option value="{{ value }}"{% if report.days == value %} selected{% endif %}>Last {{ value }} days</option>{% endfor %}
+    </select>
+    <noscript><button class="button" type="submit">Apply</button></noscript>
+    <div class="reports-actions" aria-label="Download report">
+      <a href="{% url 'analytics:export' 'csv' %}?range={{ report.days }}">CSV</a>
+      <a href="{% url 'analytics:export' 'xlsx' %}?range={{ report.days }}">Excel</a>
+      <a href="{% url 'analytics:export' 'pdf' %}?range={{ report.days }}">PDF</a>
+    </div>
+  </form>
+</section>
+
+{% if report.summary %}
+  <section class="reports-summary" aria-label="Report summary">
+    {% for metric in report.summary %}<article><p>{{ metric.label }}</p><strong>{{ metric.value }}</strong></article>{% endfor %}
+  </section>
+{% endif %}
+
+{% if report.can_orders %}
+  {{ report.daily|json_script:"daily-sales-data" }}
+  <div class="reports-grid">
+    <section class="reports-panel">
+      <header><div><p class="admin-eyebrow">Revenue</p><h2>Daily paid sales</h2></div></header>
+      <canvas id="daily-sales-chart" aria-label="Daily paid sales chart" role="img"></canvas>
+    </section>
+    <section class="reports-panel">
+      <header><div><p class="admin-eyebrow">Products</p><h2>Top sellers</h2></div></header>
+      {% if report.products %}
+        <table class="reports-table"><thead><tr><th>Product</th><th>Units</th><th>Revenue</th></tr></thead><tbody>{% for product in report.products %}<tr><td>{{ product.product_name }}</td><td>{{ product.units_sold }}</td><td>USD {{ product.revenue|floatformat:2 }}</td></tr>{% endfor %}</tbody></table>
+      {% else %}<p class="reports-muted">No paid product sales in this period.</p>{% endif %}
+    </section>
+  </div>
+{% endif %}
+
+<div class="reports-grid{% if report.can_orders %} reports-grid-spaced{% endif %}">
+  {% if report.can_products %}
+    <section class="reports-panel">
+      <header><div><p class="admin-eyebrow">Inventory</p><h2>Low-stock watchlist</h2></div><a href="{% url 'admin:products_product_changelist' %}">Manage</a></header>
+      {% if report.inventory %}<table class="reports-table"><thead><tr><th>Item</th><th>On hand</th><th>Reorder at</th></tr></thead><tbody>{% for item in report.inventory %}<tr><td>{{ item.name }}</td><td>{{ item.stock }}</td><td>{{ item.reorder_level }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="reports-muted">All visible items are above their reorder level.</p>{% endif %}
+    </section>
+  {% endif %}
+  {% if report.can_coupons %}
+    <section class="reports-panel">
+      <header><div><p class="admin-eyebrow">Promotions</p><h2>Coupon impact</h2></div></header>
+      {% if report.coupons %}<table class="reports-table"><thead><tr><th>Coupon</th><th>Orders</th><th>Given</th></tr></thead><tbody>{% for coupon in report.coupons %}<tr><td>{{ coupon.coupon__code }}</td><td>{{ coupon.orders }}</td><td>USD {{ coupon.discount_total|floatformat:2 }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="reports-muted">No coupon redemptions in this period.</p>{% endif %}
+    </section>
+  {% endif %}
+  {% if report.can_security %}
+    <section class="reports-panel">
+      <header><div><p class="admin-eyebrow">Security</p><h2>Event volume</h2></div></header>
+      {% if report.security %}<table class="reports-table"><thead><tr><th>Severity</th><th>Events</th></tr></thead><tbody>{% for event in report.security %}<tr><td>{{ event.severity|title }}</td><td>{{ event.events }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="reports-muted">No security events in this period.</p>{% endif %}
+    </section>
+  {% endif %}
+</div>
+
+{% if not report.summary %}<section class="reports-notice"><strong>No reporting permissions yet</strong><p>Ask an administrator for access to the operational modules you need.</p></section>{% endif %}
+{% endblock %}

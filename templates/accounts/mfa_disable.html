@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Disable MFA | Secure Commerce{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-intro"><p class="eyebrow">Account security</p><h1>Make security changes deliberately.</h1><p class="lede">Removing MFA reduces account protection. Confirm your password before continuing.</p></div>
+  <section class="sc-card auth-card" aria-labelledby="disable-title">
+    <div><p class="eyebrow">Security setting</p><h2 id="disable-title">Disable MFA</h2></div>
+    <form class="sc-form" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="form-actions"><button class="sc-button" type="submit">Disable MFA</button></div>
+    </form>
+  </section>
+</section>
+{% endblock %}

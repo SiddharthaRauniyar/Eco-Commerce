@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Wishlist | Secure Commerce{% endblock %}
+{% block content %}
+<section class="store-section wishlist-page" aria-labelledby="wishlist-title"><div class="section-heading"><div><p class="eyebrow">Saved with intention</p><h1 id="wishlist-title">Your wishlist</h1></div><a class="text-link" href="{% url 'products:catalog' %}">Explore products</a></div><div class="product-grid">{% for product in products %}{% include "products/_product_card.html" with product=product %}{% empty %}<div class="empty-state"><h2>Nothing saved yet.</h2><p>Save products you want to revisit without adding them to your cart.</p><a class="sc-button" href="{% url 'products:catalog' %}">Explore products</a></div>{% endfor %}</div></section>
+{% endblock %}

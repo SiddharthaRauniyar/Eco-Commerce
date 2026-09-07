@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sign in | Secure Commerce{% endblock %}
+{% block content %}
+<section class="auth-layout">
+  <div class="auth-intro">
+    <p class="eyebrow">Welcome back</p>
+    <h1>Secure access, without friction.</h1>
+    <p class="lede">Your account is protected with verification, strong passwords, and optional multi-factor authentication.</p>
+  </div>
+  <section class="sc-card auth-card" aria-labelledby="login-title">
+    <div><p class="eyebrow">Account access</p><h2 id="login-title">Sign in</h2></div>
+    <form class="sc-form" method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {{ form.as_p }}
+      <div class="form-actions"><button class="sc-button" type="submit">Sign in</button></div>
+    </form>
+    <p class="auth-links"><a href="{% url 'accounts:password_reset' %}">Forgot your password?</a><a href="{% url 'accounts:resend_verification' %}">Resend email verification</a></p>
+  </section>
+</section>
+{% endblock %}
